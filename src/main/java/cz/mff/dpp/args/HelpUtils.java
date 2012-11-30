@@ -1,8 +1,9 @@
 package cz.mff.dpp.args;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.AccessibleObject;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.Map.Entry;
 
 /**
@@ -25,18 +26,20 @@ class HelpUtils {
 	 *            annotated objects
 	 */
 	public static void printHelp(final Introspector introspector) {
+		printHelp(introspector, new PrintWriter(System.out));
+	}
 
-		System.out.println("Usage: OPTIONS");
+	public static void printHelp(final Introspector introspector, PrintWriter out) {
+		out.println("Usage: OPTIONS");
 		for (Option option : introspector.getDeclaredOptions()) {
-			printHelpForOption(option, introspector.optionToAccesible(option));
+			printHelpForOption(option, introspector.optionToAccesible(option), out);
 		}
 
-		System.out.println("Usage: ARGUMENTS");
+		out.println("Usage: ARGUMENTS");
 		for (Entry<AccessibleObject, Argument> entry : introspector
 				.getArguments()) {
-			printHelpForArgument(entry.getValue(), entry.getKey());
+			printHelpForArgument(entry.getValue(), entry.getKey(), out);
 		}
-
 	}
 
 	/**
@@ -47,94 +50,94 @@ class HelpUtils {
 	 *            annotation for the accessible object
 	 * @param accessible
 	 *            annotated object to print help for
+	 * @param out
+	 * 			  where to print output
 	 */
 	private static void printHelpForOption(Option option,
-			AccessibleObject accessible) {
+			AccessibleObject accessible, PrintWriter out) {
 
-		System.out.printf("\t%s ", option.name());
+		out.printf("\t%s ", option.name());
 		for (String alias : option.aliases()) {
-			System.out.printf(", %s ", alias);
+			out.printf(", %s ", alias);
 		}
 
 		if (ReflectUtils.isFlagType(accessible)) {
-			System.out.printf("[flag]");
+			out.printf("[flag]");
 		} else if (ReflectUtils.isSimpleType(accessible)) {
-			System.out
-					.printf("[%s]", ReflectUtils.getValueTypeName(accessible));
+			out.printf("[%s]", ReflectUtils.getValueTypeName(accessible));
 		} else if (ReflectUtils.isArrayType(accessible)) {
-			System.out.printf("[array of %s]",
+			out.printf("[array of %s]",
 					ReflectUtils.getValueTypeName(accessible));
 		}
 
 		if (option.required()) {
-			System.out.printf(" REQUIRED ");
+			out.printf(" REQUIRED ");
 		}
 
 		if (ReflectUtils.isEnumType(accessible)) {
-			System.out.printf("\n\t\tAllowed values: %s",
+			out.printf("\n\t\tAllowed values: %s",
 					ReflectUtils.getEnumConstants(accessible));
 		} 
 
-		System.out.printf("\n\t\t %s \n", option.description());
+		out.printf("\n\t\t %s \n", option.description());
 
 		if (option.incompatible().length > 0) {
-			System.out.printf("\n\t\t NOTE: Cannot be used together with: ");
+			out.printf("\n\t\t NOTE: Cannot be used together with: ");
 			for (String incompatilbe : option.incompatible()) {
-				System.out.printf("%s ", incompatilbe);
+				out.printf("%s ", incompatilbe);
 
 			}
 		}
 
 		if (option.mustUseWith().length > 0) {
-			System.out.printf("\n\t\t NOTE: Used together with: ");
+			out.printf("\n\t\t NOTE: Used together with: ");
 			for (String with : option.mustUseWith()) {
-				System.out.printf("%s ", with);
+				out.printf("%s ", with);
 
 			}
 		}
 
-		printConstraint(accessible);
+		printConstraint(accessible, out);
 		
-		System.out.println();
+		out.println();
 
 	}
 
 	private static void printHelpForArgument(Argument argument,
-			AccessibleObject accessible) {
+			AccessibleObject accessible, PrintWriter out) {
 
 		if (!argument.name().isEmpty()) {
-			System.out.printf("\t%s ", argument.name());
+			out.printf("\t%s ", argument.name());
 		} else {
-			System.out.printf("\t%s ", "ARGUMENT");
+			out.printf("\t%s ", "ARGUMENT");
 		}
 
 		if (ReflectUtils.isArrayType(accessible)) {
-			System.out.printf("[array of %s] ",
+			out.printf("[array of %s] ",
 					ReflectUtils.getValueTypeName(accessible));
 			
 			if (argument.size() > 0 ) {
-				System.out.printf("(index: %d, size: %d)", argument.index(), argument.size() );
+				out.printf("(index: %d, size: %d)", argument.index(), argument.size() );
 			} else {
-				System.out.printf("(all from index %d)", argument.index());
+				out.printf("(all from index %d)", argument.index());
 			}
 		} else {
-			System.out
-					.printf("[%s] ", ReflectUtils.getValueTypeName(accessible));
-			System.out.printf("(index: %d)", argument.index() );
+			out.printf("[%s] ", ReflectUtils.getValueTypeName(accessible));
+			out.printf("(index: %d)", argument.index() );
 		}
 
 		if (argument.required()) {
-			System.out.printf(" REQUIRED ");
+			out.printf(" REQUIRED ");
 		}
 
-		System.out.printf("\n\t\t %s \n", argument.description());
+		out.printf("\n\t\t %s \n", argument.description());
 		
-		printConstraint(accessible);
-		System.out.println();
+		printConstraint(accessible, out);
+		out.println();
 
 	}
 	
-	private static void printConstraint(AccessibleObject accessible) {
+	private static void printConstraint(AccessibleObject accessible, PrintWriter out) {
 		Constraint constraint = ReflectUtils.getConstraint(accessible);
 		
 		if (constraint == null) {
@@ -142,33 +145,33 @@ class HelpUtils {
 		}
 		boolean some = false;
 		
-		System.out.printf("\t\tconstraints: ");
+		out.printf("\t\tconstraints: ");
 		
 		if (!constraint.min().isEmpty()) {
-			System.out.printf("min=%s ",constraint.min()); 
+			out.printf("min=%s ",constraint.min());
 			some = true;
 		}
 		
 		if (!constraint.max().isEmpty()) {
-			System.out.printf("max=%s ",constraint.max()); 
+			out.printf("max=%s ",constraint.max());
 			some = true;
 		}
 		
 		if (constraint.allowedValues().length > 0) {
-			System.out.printf("allowed values=%s ",Arrays.toString(constraint.allowedValues())); 
-			System.out.printf("(ignore case=%s) ",constraint.ignoreCase());
+			out.printf("allowed values=%s ",Arrays.toString(constraint.allowedValues()));
+			out.printf("(ignore case=%s) ",constraint.ignoreCase());
 			some = true;
 		}
 		
 		if (!constraint.regexp().isEmpty()) {
-			System.out.printf("regexp=%s ",constraint.regexp());
+			out.printf("regexp=%s ",constraint.regexp());
 			some = true;
 		}
 		
 		if (!some) {
-			System.out.println("none");
+			out.println("none");
 		} else {
-			System.out.println("");
+			out.println("");
 		}
 		
 	}

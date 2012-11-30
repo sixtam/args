@@ -2,6 +2,9 @@ package cz.mff.dpp.args;
 
 import cz.mff.dpp.args.OptionUtils.Used;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.util.LinkedList;
@@ -147,6 +150,23 @@ public class Parser {
 	 */
 	public void usage() {
 		HelpUtils.printHelp(annotatedObjects);
+	}
+
+	public void usage(PrintStream out) {
+		HelpUtils.printHelp(annotatedObjects, new PrintWriter(out));
+	}
+	public void usage(PrintWriter out) {
+		HelpUtils.printHelp(annotatedObjects, out);
+	}
+
+	public String getUsageString() {
+
+		StringWriter stringWriter = new StringWriter();
+
+		HelpUtils.printHelp(annotatedObjects, new PrintWriter(stringWriter));
+
+		return stringWriter.toString();
+
 	}
 
 	// ------------------------------------------------------------------------
