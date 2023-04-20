@@ -4,7 +4,7 @@ advancedMode:
   enabled: false
 build:
   # Image used by CI pipelines in build tasks, recommendation: use the official maven repo if you want to change runtime version: https://hub.docker.com/_/maven
-  image: maven:3.8.6-openjdk-17
+  image: maven:3.8.6-openjdk-11
   # Environment variables used by CI pipelines in all tasks
   environmentVariables: []
   #- key: variable1
