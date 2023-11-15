@@ -1,9 +1,0 @@
----
-codenow:
-  connections: []
-  runtime:
-    replicas: 1
-    resources:
-      limits: {}
-      requests:
-        memory: "128M"
