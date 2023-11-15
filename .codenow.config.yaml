@@ -4,6 +4,7 @@ codenow:
   runtime:
     replicas: 1
     resources:
-      limits: {}
+      limits:
+        memory: "256M"
       requests:
         memory: "128M"
