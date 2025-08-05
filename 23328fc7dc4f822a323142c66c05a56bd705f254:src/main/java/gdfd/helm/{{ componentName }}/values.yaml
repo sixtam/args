@@ -1,0 +1,52 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: {{ instances }}
+configHash: "1" # configuration change detection
+codenow:
+  instance: ""
+  applicationName: "{{ applicationName }}"
+  applicationRuntimeName: "{{ applicationRuntimeName }}"
+  applicationVersion: ""
+  componentRuntimeName: "{{ componentRuntimeName }}"
+  componentName: "{{ componentName }}"
+  componentVersion: ${project.version}
+  templateId: "{{ templateId }}"
+  domainName: "{{ domainName }}"
+  environmentId: ""
+  serviceMeshGateway: "istio-system/public-gateway"
+
+buildNumber: "${env.BUILD_NUMBER}"
+
+image:
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: docker-user-registry
+
+remoteDebug:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 8081
+  externalEndpointEnabled: true
+
+fluentbit:
+  istioProxy:
+    enabled: true
+    parser: envoy-logging-filter-parser
+  parser: oxus-app-component-json
+
+configFiles: {}
+environmentVariables: {}
+
+metricsPrometheusEnabled: true
+metricsPrometheusStep: PT1M
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

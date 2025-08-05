@@ -1,0 +1,57 @@
+{
+  "name": "ginthub-link-test3",
+  "language": "",
+  "languageVersion": "",
+  "description": "",
+  "buildSystem": "docker",
+  "buildSystemVersion": "25.0.3",
+  "framework": "",
+  "frameworkVersion": "",
+  "componentConfiguration": [ 
+    {
+      "key": "rootPath",
+      "name": "Root path",
+      "defaultValue": "/",
+      "description": "Root path that nginx HTTP server use to serve the content",
+      "type": "STRING"
+    },
+    {
+      "key": "healthEndpoint",
+      "name": "Health endpoint",
+      "defaultValue": "true",
+      "description": "Generate configuration for health endpoint",
+      "type": "BOOLEAN"
+    },
+    {
+      "key": "instances",
+      "name": "Instances",
+      "defaultValue": "1",
+      "description": "Number of runtime instances",
+      "type": "INTEGER"
+    },
+    {
+      "key": "environment",
+      "name": "Environment",
+      "defaultValue": "",
+      "description": "Environment variable for container",
+      "type": "LIST",
+      "listValues": [
+        "Development",
+        "Stage",
+        "Production"
+      ]
+    }, 
+    {
+    "type" : "EXPAND_DIRECTORIES",
+    "enabled" : false
+    }, 
+    {
+    "type" : "IGNORE_DIRECTORIES",
+    "directories" : [ ]
+    }, 
+    {
+    "type" : "IGNORE_FILES",
+    "files" : [ ]
+  }
+  ]
+}
