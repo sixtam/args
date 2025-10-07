@@ -4,7 +4,7 @@ advancedMode:
   enabled: false
 build:
   # Image used by CI pipelines in build tasks, recommendation: use the official maven repo if you want to change runtime version: https://hub.docker.com/_/maven
-  image: docker.io/gradle:jdk11
+  image: docker.io/maven:3.9.9-eclipse-temurin-21-alpine
   # Environment variables used by CI pipelines in all tasks
   environmentVariables: []
     #- key: variable1
@@ -15,13 +15,13 @@ build:
     #  value: value3
   pipelines:
     release:
-      pipeline: java-gradle-app-release
+      pipeline: java-maven-app-release
     preview:
-      pipeline: java-gradle-app-preview
+      pipeline: java-maven-app-preview
     triggers: []
 runtime:
   # Image is used as a base image for your runtime container
-  image: docker.io/openjdk:11.0.3-jre-slim-stretch
+  image: docker.io/eclipse-temurin:21-alpine
   # Port on which the service will be exposed
   port: 80
   endpoints:
